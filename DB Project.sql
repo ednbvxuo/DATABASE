@@ -131,8 +131,8 @@ Drop Table If Exists Voucher
 Drop Table If Exists Technical_Support_Ticket 
 End
 
--- I skipped section d till we do the views,functions... first so we know their names then go back here and drop them later
-
+-- I skipped section d till we do the views,functions... first so we know exactly what to drop first
+  
 Create Procedure TruncateAllTables as begin
 ALTER TABLE Process_Payment NOCHECK CONSTRAINT ALL
 ALTER TABLE Subscription NOCHECK CONSTRAINT ALL
@@ -158,3 +158,5 @@ TRUNCATE TABLE E_shop;
 ALTER TABLE Process_Payment CHECK CONSTRAINT ALL
 ALTER TABLE Subscription CHECK CONSTRAINT ALL
 End
+
+
