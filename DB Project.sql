@@ -2,18 +2,19 @@ CREATE DATABASE Telecom_Team_4
 use DATABASE Telecom_Team_4
 create procedure createAllTables AS
 Begin 
-Create table Customer_profile (nationalID int primary key, first_name  Varchar(50), last_name  Varchar(50), email 
-Varchar(50), address  Varchar(50), date_of_birth  date )
+Create table Customer_profile (nationalID int primary key, first_name Varchar(50), last_name Varchar(50), email 
+Varchar(50), address Varchar(50), date_of_birth date )
   
-Create table  Customer_Account( (mobileNo  char(11) primary key, pass varchar(50),balance  decimal(10,1),
-account_type  Varchar(50), start_date date, status  Varchar(50), point  int, nationalID  int,
+Create table  Customer_Account( mobileNo char(11) primary key, pass varchar(50),balance decimal(10,1),
+account_type Varchar(50), start_date date, status  Varchar(50), point  int, nationalID  int,
 FOREIGN KEY (nationalID) REFERENCES Customer_Profile(nationalID))
   
 Create table Service_Plan (planID int primary key, SMS_offered  int, minutes_offered  int, data_offered  int, name 
 Varchar(50), price int, description  Varchar(50))
   
-Create table Subscription (mobileNo  char(11) primary key, planID int primary key, subscription_date  date, status  Varchar(50),
+Create table Subscription (mobileNo  char(11), planID int, subscription_date  date, status  Varchar(50),
 FOREIGN KEY (mobileNo_) references Customer_Account(mobileNo),
+PRIMARY KEY (mobileNo, planID),
 FOREIGN KEY (planID) references Service Plan(planID))
 
 Create table Plan_Usage (usageID int primary key, start_date  date, end_date  date, data_consumption  int,
@@ -28,8 +29,12 @@ Foreign Key Payment(mobileNo) references Customer_Account(mobileNo))
 Create table Process_Payment (paymentID int primary key, planID  int, remaining_balance, extra_amount,
 Foreign Key Process_Payment(paymentID) references Payment(paymentID),
 Foreign Key Process_Payment(planID) references Service_Plan(planID),
-Foreign Key Process_Payment(remaining_balance) as Service_Plan(price) - Payment(amount) if ( Payment(amount) <Service_Plan(price)),
-Foreign Key Process_Payment(additional_amounts) as Payment(amount)- Service_Plan(price) if ( Payment(amount) >Service_Plan(price)))
+remaining_balance AS (CASE WHEN amount < (SELECT price FROM Service_Plan WHERE planID = Process_Payment.planID) 
+                               THEN (SELECT price FROM Service_Plan WHERE planID = Process_Payment.planID) - amount 
+                               ELSE NULL END),
+    extra_amount AS (CASE WHEN amount > (SELECT price FROM Service_Plan WHERE planID = Process_Payment.planID) 
+                          THEN amount - (SELECT price FROM Service_Plan WHERE planID = Process_Payment.planID) 
+                          ELSE NULL END),)
   
 Create table  Wallet (walletID int primary key, current_balance  decimal(10,2), currency Varchar(50), last_modified_date 
 date, nationalID  int, mobileNo  char(11),
