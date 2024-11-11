@@ -24,23 +24,40 @@ FOREIGN KEY (planID) REFERENCES Service_Plan(planID));
 CREATE TABLE Payment (paymentID INT IDENTITY(1,1) PRIMARY KEY,amount DECIMAL(10,1),date_of_payment DATE,payment_method VARCHAR(50) CHECK (payment_method IN ('cash', 'credit')),
   status VARCHAR(50) CHECK (status IN ('successful', 'pending', 'rejected')),mobileNo CHAR(11),
 FOREIGN KEY (mobileNo) REFERENCES Customer_Account(mobileNo));
-  
+
+CREATE FUNCTION dbo.CalculateRemainingBalance (@paymentAmount DECIMAL(10,1), @planID INT)
+RETURNS DECIMAL(10, 2)
+AS BEGIN
+DECLARE @price INT;
+SELECT @price = price FROM Service_Plan WHERE planID = @planID;
+RETURN CASE WHEN @paymentAmount < @price THEN @price - @paymentAmount ELSE 0 END;
+END;
+
+CREATE FUNCTION dbo.CalculateExtraAmount (@paymentAmount DECIMAL(10,1), @planID INT)
+RETURNS DECIMAL(10, 2)
+AS BEGIN
+DECLARE @price INT;
+SELECT @price = price FROM Service_Plan WHERE planID = @planID;
+RETURN CASE WHEN @paymentAmount > @price THEN @paymentAmount - @price ELSE 0 END;
+END;
+
 CREATE TABLE Process_Payment (paymentID INT,planID INT,
- remaining_balance AS (
- CASE 
- WHEN amount < (SELECT price FROM Service_Plan WHERE planID = Process_Payment.planID) 
-THEN (SELECT price FROM Service_Plan WHERE planID = Process_Payment.planID) - amount 
-ELSE NULL 
- END ),
- extra_amount AS (
-CASE 
-WHEN amount > (SELECT price FROM Service_Plan WHERE planID = Process_Payment.planID) 
-THEN amount - (SELECT price FROM Service_Plan WHERE planID = Process_Payment.planID) 
-ELSE NULL 
-END),
+ remaining_balance DECIMAL(10, 2), extra_amount DECIMAL(10, 2), 
 PRIMARY KEY (paymentID, planID),
 FOREIGN KEY (paymentID) REFERENCES Payment(paymentID),
 FOREIGN KEY (planID) REFERENCES Service_Plan(planID));
+ 
+INSERT INTO Process_Payment (paymentID, planID, remaining_balance, extra_amount)
+SELECT 
+p.paymentID,
+sp.planID,
+dbo.CalculateRemainingBalance(p.amount, sp.planID),
+dbo.CalculateExtraAmount(p.amount, sp.planID)
+FROM Payment p
+JOIN 
+    Service_Plan sp ON p.mobileNo = (SELECT mobileNo FROM Subscription WHERE planID = sp.planID)
+WHERE 
+    p.status = 'successful';
   
 CREATE TABLE Wallet (walletID INT IDENTITY(1,1) PRIMARY KEY,current_balance DECIMAL(10,2),currency VARCHAR(50),last_modified_date DATE,nationalID INT,mobileNo CHAR(11),
 FOREIGN KEY (nationalID) REFERENCES Customer_profile(nationalID) );
