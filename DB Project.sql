@@ -107,6 +107,8 @@ FOREIGN KEY (mobileNo) REFERENCES Customer_Account(mobileNo))
 End
 
 -- I STILL HAVEN'T INCORPRATED THE 10% CASH BACK YET OTHERWISE ALL IS GOOD
+-- Can I use multiple identities in the same table?
+-- there is incosistency with Technical Support Ticket name in schema
   
 CREATE PROCEDURE dropAllTables AS
 BEGIN
@@ -132,7 +134,7 @@ Drop Table If Exists Technical_Support_Ticket
 End
 
 -- I skipped section d till we do the views,functions... first so we know exactly what to drop first
-  
+
 Create Procedure TruncateAllTables as begin
 ALTER TABLE Process_Payment NOCHECK CONSTRAINT ALL
 ALTER TABLE Subscription NOCHECK CONSTRAINT ALL
@@ -158,5 +160,56 @@ TRUNCATE TABLE E_shop;
 ALTER TABLE Process_Payment CHECK CONSTRAINT ALL
 ALTER TABLE Subscription CHECK CONSTRAINT ALL
 End
+
+CREATE VIEW allCustomerAccounts AS 
+SELECT  C.nationalID, C.first_name, C.last_name, C.email, C.address, C.date_of_birth,
+A.mobileNo,A.pass, A.balance, A.account_type,A.start_date, A.status, A.point FROM Customer_profile C JOIN Customer_Account A ON Customer_profile.nationalID = Customer_Account.nationalID
+WHERE Customer_Account.status = 'active';
+
+-- in the previous procedure we need to check if the right way is to omit certain attributes 
+-- for the sake of the privacy or select all attributes like he asked
+--and which attributes do you need exactly ffrom customer account
+
+Create View allServicePlans as select * from Service_Plan;
+
+Create View allBenefits as select from Benefits where status='active';
+
+Create view AccountPayments as 
+Select P.paymentID, P.amount, P.date_of_payment, P.status, P.mobileNo, A.nationalID from Payment P join Customer_Account on Payment.mobileNo = Customer_Account.mobileNo;
+
+-- This previous Procedure has the same privacy issue of showing the password we need to ask a ta what attributes do we need from cust.Account
+
+CREATE VIEW allShops AS
+SELECT Shop.shopID, Shop.name, Shop.category,Physical_Shop.address, Physical_Shop.working_hours,
+E_Shop.URL, E_Shop.rating FROM Shop FULL OUTER JOIN Physical_Shop ON Shop.shopID = Physical_Shop.shopID
+FULL OUTER JOIN E_Shop ON Shop.shopID = E_Shop.shopID
+WHERE Physical_Shop.shopID IS NOT NULL OR E_Shop.shopID IS NOT NULL; 
+
+--is the previous view correct
+
+Create View allResolvedTickets as select * from Technical_Support_Ticket where status='Resolved';
+
+Create View CustomerWallet as Select W.walletID,W.current_balance,W.currency,W.last_modified_date,
+W.nationalID,W.mobileNo,N.first_name,N.last_name from Wallet W join Customer_profile N on 
+W.nationalID=N.nationalID;
+
+Create View PhysicalStoreVouchers as select P.Shop.name,V.voucherID,V.value from Physical_Shop P join
+Voucher V on P.shopID= V.shopID;
+
+Create View Num_of_cashback as C.count(*) AS count_of_cashback, W.walletID from Cashback C join Wallet W on
+C.walletID=W.walletID group by W.walletID;
+
+CREATE PROCEDURE Account_Plan AS BEGIN
+SELECT A.mobileNo, S.planID, S.name FROM Subscription A
+JOIN Service_Plan S ON A.planID = S.planID;
+END
+-- in previous question when he says 'list all accounts along ...' which attribute does he mean
+-- I left B and C causse they are functions
+Create procedure Benefits_Account As Begin
+
+
+
+
+
 
 
