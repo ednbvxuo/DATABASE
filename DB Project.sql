@@ -126,11 +126,35 @@ Drop Table If Exists Customer_Account
 Drop Table If Exists Customer_Profile 
 Drop Table If Exists Shop 
 Drop Table If Exists E-shop 
+Drop Table If Exists Physical_Shop
 Drop Table If Exists Voucher 
 Drop Table If Exists Technical_Support_Ticket 
 End
 
--- I skipped section d till we do the views first so we know their names then go back here and drop them laster
+-- I skipped section d till we do the views,functions... first so we know their names then go back here and drop them later
 
-
-
+Create Procedure TruncateAllTables as begin
+ALTER TABLE Process_Payment NOCHECK CONSTRAINT ALL
+ALTER TABLE Subscription NOCHECK CONSTRAINT ALL
+TRUNCATE TABLE Process_Payment;
+TRUNCATE TABLE Subscription;
+TRUNCATE TABLE Plan_Usage;
+TRUNCATE TABLE Payment;
+TRUNCATE TABLE Wallet;
+TRUNCATE TABLE Transfer_money;
+TRUNCATE TABLE Benefits;
+TRUNCATE TABLE Points_Group;
+TRUNCATE TABLE Exclusive_Offer;
+TRUNCATE TABLE Cashback;
+TRUNCATE TABLE Plan_Provides_Benefits;
+TRUNCATE TABLE Voucher;
+TRUNCATE TABLE Technical_Support_Ticket;
+TRUNCATE TABLE Customer_Account;
+TRUNCATE TABLE Customer_profile;
+TRUNCATE TABLE Service_Plan;
+TRUNCATE TABLE Shop;
+TRUNCATE TABLE Physical_Shop;
+TRUNCATE TABLE E_shop;
+ALTER TABLE Process_Payment CHECK CONSTRAINT ALL
+ALTER TABLE Subscription CHECK CONSTRAINT ALL
+End
