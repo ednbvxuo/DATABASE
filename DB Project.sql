@@ -25,7 +25,7 @@ CREATE TABLE Payment (paymentID INT IDENTITY(1,1) PRIMARY KEY,amount DECIMAL(10,
   status VARCHAR(50) CHECK (status IN ('successful', 'pending', 'rejected')),mobileNo CHAR(11),
 FOREIGN KEY (mobileNo) REFERENCES Customer_Account(mobileNo)) 
 
-CREATE FUNCTION dbo.CalculateRemainingBalance (@paymentAmount DECIMAL(10,1), @planID INT)
+CREATE FUNCTION CalculateRemainingBalance (@paymentAmount DECIMAL(10,1), @planID INT)
 RETURNS DECIMAL(10, 2)
 AS BEGIN
 DECLARE @price INT 
@@ -33,7 +33,7 @@ SELECT @price = price FROM Service_Plan WHERE planID = @planID
 RETURN CASE WHEN @paymentAmount < @price THEN @price - @paymentAmount ELSE 0 END 
 END 
 
-CREATE FUNCTION dbo.CalculateExtraAmount (@paymentAmount DECIMAL(10,1), @planID INT)
+CREATE FUNCTION CalculateExtraAmount (@paymentAmount DECIMAL(10,1), @planID INT)
 RETURNS DECIMAL(10, 2)
 AS BEGIN
 DECLARE @price INT 
@@ -51,8 +51,8 @@ INSERT INTO Process_Payment (paymentID, planID, remaining_balance, extra_amount)
 SELECT 
 p.paymentID,
 sp.planID,
-dbo.CalculateRemainingBalance(p.amount, sp.planID),
-dbo.CalculateExtraAmount(p.amount, sp.planID)
+CalculateRemainingBalance(p.amount, sp.planID),
+CalculateExtraAmount(p.amount, sp.planID)
 FROM Payment p
 JOIN 
     Service_Plan sp ON p.mobileNo = (SELECT mobileNo FROM Subscription WHERE planID = sp.planID)
