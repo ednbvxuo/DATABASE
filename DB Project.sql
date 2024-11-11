@@ -130,3 +130,7 @@ Drop Table If Exists Voucher
 Drop Table If Exists Technical_Support_Ticket 
 End
 
+-- I skipped section d till we do the views first so we know their names then go back here and drop them laster
+
+
+
