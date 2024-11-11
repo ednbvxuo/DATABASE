@@ -76,4 +76,5 @@ Foreign Key Voucher(shopID) references Shop(shopID))
 Create table Technical_Support_Ticket (ticketID int primary key, mobileNo  char(11) primary key, Issue_description  Varchar(50),
 priority_level int, status  Varchar(50),
 Foreign Key Technical_Support_Ticket(mobileNo) references Customer_Account(mobileNo))
+End
 
