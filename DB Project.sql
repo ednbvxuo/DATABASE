@@ -2,89 +2,85 @@ CREATE DATABASE Telecom_Team_4
 use DATABASE Telecom_Team_4
 create procedure createAllTables AS
 Begin 
-Create table Customer_profile (nationalID int primary key, first_name Varchar(50), last_name Varchar(50), email 
-Varchar(50), address Varchar(50), date_of_birth date )
+CREATE TABLE Customer_profile (nationalID INT PRIMARY KEY,first_name VARCHAR(50),last_name VARCHAR(50),email VARCHAR(50),address VARCHAR(50),date_of_birth DATE);
   
-Create table  Customer_Account( mobileNo char(11) primary key, pass varchar(50),balance decimal(10,1),
-account_type Varchar(50), start_date date, status  Varchar(50), point  int, nationalID  int,
-FOREIGN KEY (nationalID) REFERENCES Customer_Profile(nationalID))
+CREATE TABLE Customer_Account ( mobileNo CHAR(11) PRIMARY KEY,pass VARCHAR(50),balance DECIMAL(10,1),account_type VARCHAR(50),start_date DATE,status VARCHAR(50),point INT, nationalID INT,
+FOREIGN KEY (nationalID) REFERENCES Customer_profile(nationalID));
   
-Create table Service_Plan (planID int Identity (1,1) primary key, SMS_offered  int, minutes_offered  int, data_offered  int, name 
-Varchar(50), price int, description  Varchar(50))
-  
-Create table Subscription (mobileNo  char(11), planID int identity (1,1), subscription_date  date, status  Varchar(50),
-FOREIGN KEY (mobileNo) references Customer_Account(mobileNo),
-PRIMARY KEY (mobileNo, planID),
-FOREIGN KEY (planID) references Service Plan(planID))
+CREATE TABLE Service_Plan (
+planID INT IDENTITY(1,1) PRIMARY KEY,SMS_offered INT,minutes_offered INT,data_offered INT, name VARCHAR(50),price INT,description VARCHAR(50));
 
-Create table Plan_Usage (usageID int identity (1,1) primary key, start_date  date, end_date  date, data_consumption  int,
-minutes_used  int, SMS_sent  int, mobileNo  char(11), planID  int,
-Foreign key (mobileNo) references Customer_Account(mobileNo),
-Foreign key (planID) references Service_Plan(planID))
+CREATE TABLE Subscription ( mobileNo CHAR(11), planID INT,subscription_date DATE,status VARCHAR(50),PRIMARY KEY (mobileNo, planID),
+FOREIGN KEY (mobileNo) REFERENCES Customer_Account(mobileNo),
+FOREIGN KEY (planID) REFERENCES Service_Plan(planID));
   
-Create table Payment (paymentID int identity (1,1) primary key , amount  decimal (10,1), date_of_payment  date, payment_method 
-Varchar(50), status  Varchar(50), mobileNo  char(11),
-Foreign Key (mobileNo) references Customer_Account(mobileNo))
+CREATE TABLE Plan_Usage (usageID INT IDENTITY(1,1) PRIMARY KEY, start_date DATE,end_date DATE,data_consumption INT,minutes_used INT,SMS_sent INT,mobileNo CHAR(11),planID INT,
+FOREIGN KEY (mobileNo) REFERENCES Customer_Account(mobileNo),
+FOREIGN KEY (planID) REFERENCES Service_Plan(planID));
   
-Create table Process_Payment (paymentID int identity (1,1) primary key, planID  int, remaining_balance DECIMAL(10, 2), extra_amount DECIMAL(10, 2),
-Foreign Key (paymentID) references Payment(paymentID),
-Foreign Key (planID) references Service_Plan(planID),
-remaining_balance AS (CASE WHEN amount < (SELECT price FROM Service_Plan WHERE planID = Process_Payment.planID) 
-                               THEN (SELECT price FROM Service_Plan WHERE planID = Process_Payment.planID) - amount 
-                               ELSE NULL END),
-    extra_amount AS (CASE WHEN amount > (SELECT price FROM Service_Plan WHERE planID = Process_Payment.planID) 
-                          THEN amount - (SELECT price FROM Service_Plan WHERE planID = Process_Payment.planID) 
-                          ELSE NULL END),)
+CREATE TABLE Payment (paymentID INT IDENTITY(1,1) PRIMARY KEY,amount DECIMAL(10,1),date_of_payment DATE,payment_method VARCHAR(50),status VARCHAR(50),mobileNo CHAR(11),
+FOREIGN KEY (mobileNo) REFERENCES Customer_Account(mobileNo));
   
-Create table  Wallet (walletID int identity (1,1) primary key, current_balance  decimal(10,2), currency Varchar(50), last_modified_date 
-date, nationalID  int, mobileNo  char(11),
-Foreign Key (nationalID) references Customer_profile(nationalID))
+CREATE TABLE Process_Payment (paymentID INT,planID INT,
+ remaining_balance AS (
+ CASE 
+ WHEN amount < (SELECT price FROM Service_Plan WHERE planID = Process_Payment.planID) 
+THEN (SELECT price FROM Service_Plan WHERE planID = Process_Payment.planID) - amount 
+ELSE NULL 
+ END ),
+ extra_amount AS (
+CASE 
+WHEN amount > (SELECT price FROM Service_Plan WHERE planID = Process_Payment.planID) 
+THEN amount - (SELECT price FROM Service_Plan WHERE planID = Process_Payment.planID) 
+ELSE NULL 
+END),
+PRIMARY KEY (paymentID, planID),
+FOREIGN KEY (paymentID) REFERENCES Payment(paymentID),
+FOREIGN KEY (planID) REFERENCES Service_Plan(planID));
+  
+CREATE TABLE Wallet (walletID INT IDENTITY(1,1) PRIMARY KEY,current_balance DECIMAL(10,2),currency VARCHAR(50),last_modified_date DATE,nationalID INT,mobileNo CHAR(11),
+FOREIGN KEY (nationalID) REFERENCES Customer_profile(nationalID) );
+  
+CREATE TABLE Transfer_money (walletID1 INT,walletID2 INT,transfer_id INT IDENTITY(1,1) PRIMARY KEY,amount DECIMAL(10,2),transfer_date DATE,
+FOREIGN KEY (walletID1) REFERENCES Wallet(walletID),
+FOREIGN KEY (walletID2) REFERENCES Wallet(walletID));
+  
+CREATE TABLE Benefits (benefitID INT IDENTITY(1,1) PRIMARY KEY,description VARCHAR(50),validity_date DATE,status VARCHAR(50),mobileNo CHAR(11),
+FOREIGN KEY (mobileNo) REFERENCES Customer_Account(mobileNo) );
+  
+ CREATE TABLE Points_Group (pointID INT IDENTITY(1,1),benefitID INT,pointsAmount INT,PaymentID INT,
+PRIMARY KEY (pointID, benefitID),
+FOREIGN KEY (benefitID) REFERENCES Benefits(benefitID),
+FOREIGN KEY (PaymentID) REFERENCES Payment(PaymentID));
+  
+CREATE TABLE Exclusive_Offer (
+offerID INT,benefitID INT,internet_offered INT,SMS_offered INT,minutes_offered INT,
+PRIMARY KEY (offerID, benefitID),
+FOREIGN KEY (benefitID) REFERENCES Benefits(benefitID));
+  
+CREATE TABLE Cashback (CashbackID INT IDENTITY(1,1) PRIMARY KEY,benefitID INT,walletID INT,amount INT,credit_date DATE,
+FOREIGN KEY (benefitID) REFERENCES Benefits(benefitID),
+FOREIGN KEY (walletID) REFERENCES Wallet(walletID));
+  
+CREATE TABLE Plan_Provides_Benefits (benefitID INT,planID INT,
+PRIMARY KEY (planID, benefitID),
+FOREIGN KEY (benefitID) REFERENCES Benefits(benefitID),
+FOREIGN KEY (planID) REFERENCES Service_Plan(planID));
+  
+CREATE TABLE Shop (shopID INT IDENTITY(1,1) PRIMARY KEY,name VARCHAR(50),category VARCHAR(50));
+  
+CREATE TABLE Physical_Shop (shopID INT PRIMARY KEY,address VARCHAR(50),working_hours VARCHAR(50),
+FOREIGN KEY (shopID) REFERENCES Shop(shopID));
+  
+CREATE TABLE E_shop (shopID INT PRIMARY KEY,URL VARCHAR(50),rating INT,
+FOREIGN KEY (shopID) REFERENCES Shop(shopID));
+  
+CREATE TABLE Voucher (voucherID INT IDENTITY(1,1) PRIMARY KEY,value INT,expiry_date DATE,points INT,mobileNo CHAR(11),shopID INT,redeem_date DATE,
+FOREIGN KEY (mobileNo) REFERENCES Customer_Account(mobileNo),
+FOREIGN KEY (shopID) REFERENCES Shop(shopID));
+  
+CREATE TABLE Technical_Support_Ticket (ticketID INT IDENTITY(1,1) PRIMARY KEY,mobileNo CHAR(11),Issue_description VARCHAR(50),priority_level INT,status VARCHAR(50),
+FOREIGN KEY (mobileNo) REFERENCES Customer_Account(mobileNo));
 
-Create table Transfer_money (walletID1 int identity(1,1) , walletID2 int identity(1,1)  , transfer_id int identity(1,1) , amount  decimal (10,2),
-transfer_date date,
-Primary key(walletID1 , walletID2 , transfer_id) 
-Foreign Key (walletID1) references Wallet(walletID),
-Foreign key (walletID2) references Wallet(walletID))
-  
-Create table Benefits (benefitID int identity(1,1)  primary key, description  Varchar(50), validity_date  date, status  Varchar(50),
-mobileNo  char(11),
-Foreign Key (mobileNo) references Customer_Account(mobileNo))
-  
-Create table Points Group (pointID int identity(1,1) , benefitID int , pointsAmount  int, PaymentID  int,
-primary key (pointID , benefitID )
-Foreign Key (benefitID) references Benefits(benefitID),
-Foreign Key (PaymentID) references Payment(PaymentID))
-  
-Create table Exclusive Offer (offerID int , benefitID int , internet_offered  int, SMS_offered  int,
-minutes_offered  int,
-primary key(offerID , benefitID)
-Foreign Key  (benefitID) references Benefits(benefitID))
-  
-Create table Cashback (CashbackID int identity(1,1), benefitID int identity(1,1), walletID  int  identity(1,1), amount  int, credit_date date,
-primary key(CashbackID int , benefitID int)
-Foreign Key (benefitID) references Benefits(benefitID),
-Foreign Key Cashback(walletID) references Wallet(walletID))
-  
-Create table Plan_Provides_Benefits (benefitID int identity(1,1) , planID int identity(1,1),
-primary key(planID , benefitID)
-Foreign Key (benefitID) references Benefits(benefitID),
-Foreign Key (planID) references Service Plan(planID))
-  
-Create table Shop (shopID int identity(1,1) primary key, name  varchar(50), category  varchar(50))
-  
-Create table Physical_Shop (shopID int identity(1,1) primary key, address varchar(50), working_hours  varchar(50),
-Foreign Key (shopID) references Shop(shopID))
-  
-Create table E-shop (shopID int primary key, URL  varchar(50), rating  int,
-Foreign Key (shopID) references Shop(shopID))
-  
-Create table Voucher (voucherID int identity(1,1) primary key, value  int, expiry_date  date, points  int, mobileNo  char(11), shopID int,
-redeem_date  date,
-Foreign Key (mobileNo) references Customer_Account(mobileNo),
-Foreign Key (shopID) references Shop(shopID))
-  
-Create table Technical_Support_Ticket (ticketID int identity(1,1) primary key , mobileNo  char(11) primary key, Issue_description  Varchar(50),
-priority_level int, status  Varchar(50),
-Foreign Key (mobileNo) references Customer_Account(mobileNo))
 End
 
