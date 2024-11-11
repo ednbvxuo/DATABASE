@@ -4,13 +4,16 @@ create procedure createAllTables AS
 Begin 
 CREATE TABLE Customer_profile (nationalID INT PRIMARY KEY,first_name VARCHAR(50),last_name VARCHAR(50),email VARCHAR(50),address VARCHAR(50),date_of_birth DATE);
   
-CREATE TABLE Customer_Account ( mobileNo CHAR(11) PRIMARY KEY,pass VARCHAR(50),balance DECIMAL(10,1),account_type VARCHAR(50),start_date DATE,status VARCHAR(50),point INT, nationalID INT,
+CREATE TABLE Customer_Account ( mobileNo CHAR(11) PRIMARY KEY,pass VARCHAR(50),balance DECIMAL(10,1),
+account_type VARCHAR(50) CHECK (account_type IN ('Post Paid', 'Prepaid', 'Pay_as_you_go')),
+start_date DATE,status VARCHAR(50) CHECK (status IN ('active', 'onhold')),point INT default 0, nationalID INT,
 FOREIGN KEY (nationalID) REFERENCES Customer_profile(nationalID));
   
 CREATE TABLE Service_Plan (
 planID INT IDENTITY(1,1) PRIMARY KEY,SMS_offered INT,minutes_offered INT,data_offered INT, name VARCHAR(50),price INT,description VARCHAR(50));
 
-CREATE TABLE Subscription ( mobileNo CHAR(11), planID INT,subscription_date DATE,status VARCHAR(50),PRIMARY KEY (mobileNo, planID),
+CREATE TABLE Subscription ( mobileNo CHAR(11), planID INT,subscription_date DATE,status VARCHAR(50) CHECK (status IN ('active', 'onhold')),
+PRIMARY KEY (mobileNo, planID),
 FOREIGN KEY (mobileNo) REFERENCES Customer_Account(mobileNo),
 FOREIGN KEY (planID) REFERENCES Service_Plan(planID));
   
@@ -18,7 +21,8 @@ CREATE TABLE Plan_Usage (usageID INT IDENTITY(1,1) PRIMARY KEY, start_date DATE,
 FOREIGN KEY (mobileNo) REFERENCES Customer_Account(mobileNo),
 FOREIGN KEY (planID) REFERENCES Service_Plan(planID));
   
-CREATE TABLE Payment (paymentID INT IDENTITY(1,1) PRIMARY KEY,amount DECIMAL(10,1),date_of_payment DATE,payment_method VARCHAR(50),status VARCHAR(50),mobileNo CHAR(11),
+CREATE TABLE Payment (paymentID INT IDENTITY(1,1) PRIMARY KEY,amount DECIMAL(10,1),date_of_payment DATE,payment_method VARCHAR(50) CHECK (payment_method IN ('cash', 'credit')),
+  status VARCHAR(50) CHECK (status IN ('successful', 'pending', 'rejected')),mobileNo CHAR(11),
 FOREIGN KEY (mobileNo) REFERENCES Customer_Account(mobileNo));
   
 CREATE TABLE Process_Payment (paymentID INT,planID INT,
@@ -45,7 +49,8 @@ CREATE TABLE Transfer_money (walletID1 INT,walletID2 INT,transfer_id INT IDENTIT
 FOREIGN KEY (walletID1) REFERENCES Wallet(walletID),
 FOREIGN KEY (walletID2) REFERENCES Wallet(walletID));
   
-CREATE TABLE Benefits (benefitID INT IDENTITY(1,1) PRIMARY KEY,description VARCHAR(50),validity_date DATE,status VARCHAR(50),mobileNo CHAR(11),
+CREATE TABLE Benefits (benefitID INT IDENTITY(1,1) PRIMARY KEY,description VARCHAR(50),validity_date DATE,
+status VARCHAR(50) CHECK (status IN ('active', 'expired')),mobileNo CHAR(11),
 FOREIGN KEY (mobileNo) REFERENCES Customer_Account(mobileNo) );
   
  CREATE TABLE Points_Group (pointID INT IDENTITY(1,1),benefitID INT,pointsAmount INT,PaymentID INT,
@@ -79,7 +84,8 @@ CREATE TABLE Voucher (voucherID INT IDENTITY(1,1) PRIMARY KEY,value INT,expiry_d
 FOREIGN KEY (mobileNo) REFERENCES Customer_Account(mobileNo),
 FOREIGN KEY (shopID) REFERENCES Shop(shopID));
   
-CREATE TABLE Technical_Support_Ticket (ticketID INT IDENTITY(1,1) PRIMARY KEY,mobileNo CHAR(11),Issue_description VARCHAR(50),priority_level INT,status VARCHAR(50),
+CREATE TABLE Technical_Support_Ticket (ticketID INT IDENTITY(1,1) PRIMARY KEY,mobileNo CHAR(11),Issue_description VARCHAR(50),priority_level INT,
+  status VARCHAR(50) CHECK (status IN ('Open', 'In Progress', 'Resolved')),
 FOREIGN KEY (mobileNo) REFERENCES Customer_Account(mobileNo));
 
 End
