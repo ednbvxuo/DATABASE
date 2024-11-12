@@ -256,7 +256,7 @@ GO
 Create procedure Account_Plan As Begin
 select * from Customer_Account C join Subscription S
 on C.mobileNo=S.mobileNo;
-Go
+End; Go
 
 --The functions part is the following one
 
