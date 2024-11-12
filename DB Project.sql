@@ -151,7 +151,7 @@ End
 
 CREATE VIEW allCustomerAccounts AS 
 SELECT  C.nationalID, C.first_name, C.last_name, C.email, C.address, C.date_of_birth,
-A.mobileNo,A.pass, A.balance, A.account_type,A.start_date, A.status, A.point FROM Customer_profile C JOIN Customer_Account A ON Customer_profile.nationalID = Customer_Account.nationalID
+A.mobileNo, A.balance, A.account_type,A.start_date, A.status, A.point FROM Customer_profile C JOIN Customer_Account A ON Customer_profile.nationalID = Customer_Account.nationalID
 WHERE Customer_Account.status = 'active';
 
 -- in the previous procedure we need to check if the right way is to omit certain attributes 
@@ -168,12 +168,10 @@ Select P.paymentID, P.amount, P.date_of_payment, P.status, P.mobileNo, A.nationa
 -- This previous Procedure has the same privacy issue of showing the password we need to ask a ta what attributes do we need from cust.Account
 
 CREATE VIEW allShops AS
-SELECT Shop.shopID, Shop.name, Shop.category,Physical_Shop.address, Physical_Shop.working_hours,
-E_Shop.URL, E_Shop.rating FROM Shop FULL OUTER JOIN Physical_Shop ON Shop.shopID = Physical_Shop.shopID
-FULL OUTER JOIN E_Shop ON Shop.shopID = E_Shop.shopID
-WHERE Physical_Shop.shopID IS NOT NULL OR E_Shop.shopID IS NOT NULL; 
+SELECT * from Shop 
+WHERE Shop.shopID IS NOT NULL; 
 
---is the previous view correct
+
 
 Create View allResolvedTickets as select * from Technical_Support_Ticket where status='Resolved';
 
@@ -191,8 +189,7 @@ CREATE PROCEDURE Account_Plan AS BEGIN
 SELECT A.mobileNo, S.planID, S.name FROM Subscription A
 JOIN Service_Plan S ON A.planID = S.planID;
 END
--- in previous question when he says 'list all accounts along ...' which attribute does he mean
--- I left B and C causse they are functions
+
 Create procedure Benefits_Account As Begin
 
 
