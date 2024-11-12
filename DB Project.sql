@@ -47,17 +47,7 @@ PRIMARY KEY (paymentID, planID),
 FOREIGN KEY (paymentID) REFERENCES Payment(paymentID),
 FOREIGN KEY (planID) REFERENCES Service_Plan(planID)) 
  
-INSERT INTO Process_Payment (paymentID, planID, remaining_balance, extra_amount)
-SELECT 
-p.paymentID,
-sp.planID,
-CalculateRemainingBalance(p.amount, sp.planID),
-CalculateExtraAmount(p.amount, sp.planID)
-FROM Payment p
-JOIN 
-    Service_Plan sp ON p.mobileNo = (SELECT mobileNo FROM Subscription WHERE planID = sp.planID)
-WHERE 
-    p.status = 'successful' 
+
   
 CREATE TABLE Wallet (walletID INT IDENTITY(1,1) PRIMARY KEY,current_balance DECIMAL(10,2),currency VARCHAR(50),last_modified_date DATE,nationalID INT,mobileNo CHAR(11),
 FOREIGN KEY (nationalID) REFERENCES Customer_profile(nationalID) ) 
@@ -76,7 +66,7 @@ FOREIGN KEY (benefitID) REFERENCES Benefits(benefitID),
 FOREIGN KEY (PaymentID) REFERENCES Payment(PaymentID)) 
   
 CREATE TABLE Exclusive_Offer (
-offerID INT,benefitID INT,internet_offered INT,SMS_offered INT,minutes_offered INT,
+offerID INT IDENTITY(1,1),benefitID INT,internet_offered INT,SMS_offered INT,minutes_offered INT,
 PRIMARY KEY (offerID, benefitID),
 FOREIGN KEY (benefitID) REFERENCES Benefits(benefitID)) 
   
@@ -106,9 +96,7 @@ CREATE TABLE Technical_Support_Ticket (ticketID INT IDENTITY(1,1) PRIMARY KEY,mo
 FOREIGN KEY (mobileNo) REFERENCES Customer_Account(mobileNo)) 
 End
 
--- I STILL HAVEN'T INCORPRATED THE 10% CASH BACK YET OTHERWISE ALL IS GOOD
--- Can I use multiple identities in the same table?
--- there is incosistency with Technical Support Ticket name in schema
+--I fixed the table names and the identity part and deleted the insert but left the fnnctions
   
 CREATE PROCEDURE dropAllTables AS
 BEGIN
