@@ -266,7 +266,21 @@ AND benefitID IN (
           FROM Benefits B
           JOIN Subscription S ON B.mobileNo = S.mobileNo AND B.planID = S.planID
           WHERE S.mobileNo = @MobileNo AND S.planID = @PlanID);
+Select * from Benefits
 END;GO
+    
+CREATE PROCEDURE Account_Payment_Points @MobileNo CHAR(11) AS BEGIN
+SELECT P.mobileNo,COUNT(*) AS Count_Of_Accepted_Payments,SUM(G.pointsAmount) AS Total_Points
+FROM  Payment P JOIN Points_Group G ON P.paymentID = G.paymentID
+WHERE P.mobileNo = @MobileNo AND P.status = 'successful'
+AND YEAR(P.date_of_payment) = YEAR(DATEADD(YEAR, -1, CURRENT_TIMESTAMP))
+GROUP BY P.mobileNo;
+END;GO
+
+
+
+
+
     
 --The functions part is the following one
 CREATE FUNCTION CalculateRemainingBalance (@paymentAmount DECIMAL(10,1), @planID INT)
