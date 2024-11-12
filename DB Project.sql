@@ -214,26 +214,6 @@ BEGIN
 END;
 GO
 
-CREATE FUNCTION CalculateRemainingBalance (@paymentAmount DECIMAL(10,1), @planID INT)
-RETURNS DECIMAL(10, 2)
-AS
-BEGIN
-    DECLARE @price INT;
-    SELECT @price = price FROM Service_Plan WHERE planID = @planID;
-    RETURN CASE WHEN @paymentAmount < @price THEN @price - @paymentAmount ELSE 0 END;
-END;
-GO
-
-CREATE FUNCTION CalculateExtraAmount (@paymentAmount DECIMAL(10,1), @planID INT)
-RETURNS DECIMAL(10, 2)
-AS
-BEGIN
-    DECLARE @price INT;
-    SELECT @price = price FROM Service_Plan WHERE planID = @planID;
-    RETURN CASE WHEN @paymentAmount > @price THEN @paymentAmount - @price ELSE 0 END;
-END;
-GO
-
 CREATE VIEW allCustomerAccounts AS 
 SELECT C.nationalID, C.first_name, C.last_name, C.email, C.address, C.date_of_birth,
        A.mobileNo, A.balance, A.account_type, A.start_date, A.status, A.point 
@@ -274,6 +254,28 @@ GO
 
 
 Create procedure Benefits_Account As Begin
+
+--The functions part is the following one
+
+CREATE FUNCTION CalculateRemainingBalance (@paymentAmount DECIMAL(10,1), @planID INT)
+RETURNS DECIMAL(10, 2)
+AS
+BEGIN
+    DECLARE @price INT;
+    SELECT @price = price FROM Service_Plan WHERE planID = @planID;
+    RETURN CASE WHEN @paymentAmount < @price THEN @price - @paymentAmount ELSE 0 END;
+END;
+GO
+
+CREATE FUNCTION CalculateExtraAmount (@paymentAmount DECIMAL(10,1), @planID INT)
+RETURNS DECIMAL(10, 2)
+AS
+BEGIN
+    DECLARE @price INT;
+    SELECT @price = price FROM Service_Plan WHERE planID = @planID;
+    RETURN CASE WHEN @paymentAmount > @price THEN @paymentAmount - @price ELSE 0 END;
+END;
+GO
 
 
 
