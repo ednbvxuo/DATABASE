@@ -258,8 +258,17 @@ select * from Customer_Account C join Subscription S
 on C.mobileNo=S.mobileNo;
 End; Go
 
+CREATE PROCEDURE Benefits_Account @MobileNo CHAR(11), @PlanID INT AS BEGIN
+DELETE FROM Benefits
+WHERE mobileNo = @MobileNo
+AND benefitID IN (
+          SELECT B.benefitID
+          FROM Benefits B
+          JOIN Subscription S ON B.mobileNo = S.mobileNo AND B.planID = S.planID
+          WHERE S.mobileNo = @MobileNo AND S.planID = @PlanID);
+END;GO
+    
 --The functions part is the following one
-
 CREATE FUNCTION CalculateRemainingBalance (@paymentAmount DECIMAL(10,1), @planID INT)
 RETURNS DECIMAL(10, 2)
 AS
