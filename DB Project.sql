@@ -253,7 +253,10 @@ JOIN Customer_Profile N ON W.nationalID = N.nationalID;
 GO
 
 
-Create procedure Benefits_Account As Begin
+Create procedure Account_Plan As Begin
+select * from Customer_Account C join Subscription S
+on C.mobileNo=S.mobileNo;
+Go
 
 --The functions part is the following one
 
