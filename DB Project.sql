@@ -213,7 +213,31 @@ BEGIN
     DROP TABLE IF EXISTS Technical_Support_Ticket;
 END;
 GO
-
+ALTER TABLE Process_Payment NOCHECK CONSTRAINT ALL
+ALTER TABLE Subscription NOCHECK CONSTRAINT ALL
+TRUNCATE TABLE Process_Payment;
+TRUNCATE TABLE Subscription;
+TRUNCATE TABLE Plan_Usage;
+TRUNCATE TABLE Payment;
+TRUNCATE TABLE Wallet;
+TRUNCATE TABLE Transfer_money;
+TRUNCATE TABLE Benefits;
+TRUNCATE TABLE Points_Group;
+TRUNCATE TABLE Exclusive_Offer;
+TRUNCATE TABLE Cashback;
+TRUNCATE TABLE Plan_Provides_Benefits;
+TRUNCATE TABLE Voucher;
+TRUNCATE TABLE Technical_Support_Ticket;
+TRUNCATE TABLE Customer_Account;
+TRUNCATE TABLE Customer_profile;
+TRUNCATE TABLE Service_Plan;
+TRUNCATE TABLE Shop;
+TRUNCATE TABLE Physical_Shop;
+TRUNCATE TABLE E_shop;
+ALTER TABLE Process_Payment CHECK CONSTRAINT ALL
+ALTER TABLE Subscription CHECK CONSTRAINT ALL;
+End;GO
+    
 CREATE VIEW allCustomerAccounts AS 
 SELECT C.nationalID, C.first_name, C.last_name, C.email, C.address, C.date_of_birth,
        A.mobileNo, A.balance, A.account_type, A.start_date, A.status, A.point 
@@ -252,6 +276,17 @@ FROM Wallet W
 JOIN Customer_Profile N ON W.nationalID = N.nationalID;
 GO
 
+Create View PhysicalStoreVouchers as select P.Shop.name,V.voucherID,V.value from Physical_Shop P join
+Voucher V on P.shopID= V.shopID;
+Go
+
+Create View E_shopVouchers as select E.Shop.name,V.voucherID,V.value from E-shop E join
+Voucher V on E.shopID= V.shopID;
+Go
+
+Create View Num_of_cashback as C.count(*) AS count_of_cashback, W.walletID from Cashback C join Wallet W on
+C.walletID=W.walletID group by W.walletID;
+Go
 
 Create procedure Account_Plan As Begin
 select * from Customer_Account C join Subscription S
