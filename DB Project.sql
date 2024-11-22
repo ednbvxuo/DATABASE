@@ -600,3 +600,117 @@ END;
 GO
 -- page 11 and 12 ziad and ahmed--
 
+
+
+
+-- insertions part
+
+--The data
+insert into Customer_profile values ('Michael' , 'Scott' , 'mscott@hotmail.com' , 'whatever' , '8/12/1976')
+insert into Customer_profile values ('Pamela' , 'Beesly' , 'pbeesly@hotmail.com' , 'meh' , '8/7/1976')
+insert into Customer_profile values ('Esraa' , 'Ahmed' , 'esraa@hotmail.com' , 'meh' , '8/7/2004')
+insert into Customer_Account values ('01234567899' , 'bbbbbb' , 277800.22, 'Post Paid' , '1/2/2014' , 'active' , 750 , 1)
+insert into Customer_Account values ('0123476' , 'abcd' , 2500.22, 'Prepaid' , '1/3/2014' , 'active' , 750 , 2)
+insert into Customer_Account values ('01010749807' , 'abcd' , 5000, 'Post Paid' , '1/3/2024' , 'active' , 400 , 3)
+
+insert into Service_Plan values (150 , 340 , 600 , 'Express' , 67 , 'Very Quick')
+insert into Service_Plan values (300 , 65 , 950 , 'wehsha awy' , 70 , 'super slow')
+insert into Service_Plan values (310 , 95 , 1950 , 'meh' , 90 , 'medium')
+
+insert into Subscription values ('01234567899' , 1 , '3/4/2022' , 'active')
+insert into Subscription values ('0123476' , 2 , '3/4/2023' , 'active')
+
+insert into Plan_Provides_Benefits values(7 , 1)
+insert into Plan_Provides_Benefits values(10, 1)
+
+insert into Plan_Provides_Benefits values (7 , 2)
+insert into Plan_Provides_Benefits values (10 , 2)
+insert into Plan_Provides_Benefits values (7 , 3)
+
+insert into Benefits values ('gamda' , '3/5/2023' , 'active' , '01234567899')
+insert into Benefits values ('mesh awy' , '3/4/2023' , 'active' , '0123476')
+insert into Benefits values('hehe', '2/8/2023','active','01010749807')
+
+insert into Payment values (1233.44 , '4/5/2024' , 'cash' , 'successful' , '01234567899')
+insert into Payment values (2000.55 , '4/2/2024' , 'cash' , 'successful' , '01234567899')
+insert into Payment values (12000.44 , '1/5/2024' , 'cash' , 'pending' , '0123476')
+insert into Payment values (1233.44 , '4/5/2024' , 'cash' , 'rejected' , '01234567899')
+insert into Payment values(300.11,'5/5/2024', 'cash', 'successful','01010749807')
+
+insert into Points_Group values (7 , 1233.44 , 1)
+insert into Points_Group values (7,  5000.44 , 2)
+
+
+INSERT INTO Technical_Support_Ticket values('01234567899', 'BLABLABLA' , 1,'Open')
+INSERT INTO Technical_Support_Ticket values('01234567899', 'BLABLABLA' , 2,'In Progress')
+INSERT INTO Technical_Support_Ticket values('01234567899', 'BLABLABLA' , 2,'Resolved')
+INSERT INTO Technical_Support_Ticket values('0123476', 'BLALA' , 1, 'Resolved')
+
+INSERT INTO Process_Payment values(1,1,55.2,33.2)
+INSERT INTO Process_Payment values(2,2,11.2,0.2)
+INSERT INTO Process_Payment values(3,1,55.2,33.2)
+INSERT INTO Process_Payment values(4,1,10.2,65.2)
+
+INSERT INTO Wallet values(500.2,'dollar','11/5/2024',1,'01234567899')
+INSERT INTO Wallet values(600,'dollar','11/9/2024',1,'0123476')
+INSERT INTO Wallet values(2000,'dollar','12/8/2023',3,'01010749807')
+
+
+-- Insert into Customer_Profile
+INSERT INTO Customer_Profile (first_name, last_name, email, address, date_of_birth)
+VALUES 
+('John', 'Doe', 'john.doe@example.com', '123 Main St', '1990-01-01');
+INSERT INTO Customer_profile VALUES 
+('Esra', 'Ahmed', 'john.doe@example.com', 'new cairo', '2004-01-01');
+
+-- Insert into Customer_Account
+INSERT INTO Customer_Account (mobileNo, pass, balance, account_type, start_date, status, point, nationalID)
+VALUES
+('01234567890', 'password123', 1000.0, 'Prepaid', '2024-01-01', 'Active', 100, 1);
+insert into Customer_Account values ('1234','pass22',500.0, 'Post paid' , '2024-02-02', 'Active', 200, 2)
+
+-- Insert into Wallet
+INSERT INTO Wallet (current_balance, currency, last_modified_date, nationalID, mobileNo)
+VALUES
+(500.0, 'USD', '2024-11-01', 1, '01234567890');
+insert into wallet values(0,'Dollar','2024-05-01',2,'1234')
+
+-- Insert into Service_Plan
+INSERT INTO Service_Plan (SMS_offered, minutes_offered, data_offered, name, price, description)
+VALUES
+(100, 200, 5000, 'Basic Plan', 50, 'Affordable basic service plan');
+insert into Service_Plan values(100,200,1000,'Basic Plan2',20,'hehe')
+
+-- Insert into Payment
+INSERT INTO Payment (amount, date_of_payment, payment_method, status, mobileNo)
+VALUES
+(100.0, '2024-11-10', 'credit', 'successful', '01234567890');
+insert into payment values (200.0,'2024-04-01','credit','successful','1234')
+insert into payment values(300.0,'2024-04-08','cash','successful','1234')
+
+-- Insert into Process_Payment
+INSERT INTO Process_Payment (paymentID, planID, remaining_balance, extra_amount)
+VALUES
+(1, 1, 0.0, 50.0);
+insert into Process_Payment values(2,2,20.1,30.1)
+insert into Process_Payment values(3,2,20,10)
+
+-- Insert into Benefits
+INSERT INTO Benefits (description, validity_date, status, mobileNo)
+VALUES
+('Cashback Benefit', '2024-12-31', 'Active', '01234567890');
+insert into Benefits values('hehe','2024-12-31','Active','1234')
+
+-- Insert into Cashback
+INSERT INTO Cashback (benefitID, walletID, amount, credit_date)
+VALUES
+(1, 1, 10.0, '2024-11-10');
+
+-- Insert into Technical_Support_Ticket
+INSERT INTO Technical_Support_Ticket (mobileNo, Issue_description, priority_level, status)
+VALUES
+('1234', 'Unable to recharge wallet', 1, 'Open'),
+('01234567890', 'Incorrect cashback credited', 2, 'In Progress'),
+('01234567890', 'Account locked due to failed logins', 3, 'Resolved'),
+('1234', 'Unable to access subscription details', 1, 'Open'),
+('1234', 'Request for plan upgrade', 2, 'Resolved');
