@@ -599,7 +599,103 @@ RETURNS DECIMAL(10, 2) AS BEGIN
 END;
 GO
 -- page 11 and 12 ziad and ahmed--
+-- first 3 procedure/functions in page 9 do not work here is the rest
 
+CREATE PROCEDURE Payment_wallet_cashback
+(
+    @MobileNo CHAR(11), 
+    @PaymentID INT, 
+    @BenefitID INT 
+)
+AS
+BEGIN
+    DECLARE @CashbackAmount INT;
+    SELECT @CashbackAmount = amount
+    FROM Cashback
+    WHERE benefitID = @BenefitID;
+
+    DECLARE @WalletID INT;
+    SELECT @WalletID = w.walletID
+    FROM Wallet w
+    INNER JOIN Customer_Account ca ON w.nationalID = ca.nationalID
+    WHERE ca.mobileNo = @MobileNo;
+
+    UPDATE Wallet
+    SET current_balance = current_balance + @CashbackAmount,
+        last_modified_date = GETDATE()
+    WHERE walletID = @WalletID;
+
+    UPDATE Cashback
+    SET credit_date = GETDATE()
+    WHERE benefitID = @BenefitID AND walletID = @WalletID;
+END;
+GO
+
+CREATE PROCEDURE Initiate_plan_payment
+(
+    @MobileNo CHAR(11), 
+    @Amount DECIMAL(10,1), 
+    @Payment_Method VARCHAR(50), 
+    @PlanID INT 
+)
+AS
+BEGIN
+  
+    INSERT INTO Payment (amount, date_of_payment, payment_method, status, mobileNo)
+    VALUES (@Amount, GETDATE(), @Payment_Method, 'Accepted', @MobileNo);
+
+   
+    UPDATE Subscription
+    SET status = 'Active', subscription_date = GETDATE()
+    WHERE mobileNo = @MobileNo AND planID = @PlanID;
+END;
+GO
+
+CREATE PROCEDURE Initiate_balance_payment
+(
+    @MobileNo CHAR(11), 
+    @Amount DECIMAL(10,1), 
+    @Payment_Method VARCHAR(50) 
+)
+AS
+BEGIN
+    INSERT INTO Payment (amount, date_of_payment, payment_method, status, mobileNo)
+    VALUES (@Amount, GETDATE(), @Payment_Method, 'Accepted', @MobileNo);
+
+    DECLARE @WalletID INT;
+    SELECT @WalletID = w.walletID
+    FROM Wallet w
+    INNER JOIN Customer_Account ca ON w.nationalID = ca.nationalID
+    WHERE ca.mobileNo = @MobileNo;
+
+    UPDATE Wallet
+    SET current_balance = current_balance + @Amount,
+        last_modified_date = GETDATE()
+    WHERE walletID = @WalletID;
+END;
+GO
+
+CREATE PROCEDURE Redeem_voucher_points
+(
+    @MobileNo CHAR(11), 
+    @VoucherID INT 
+)
+AS
+BEGIN
+    DECLARE @VoucherPoints INT;
+    SELECT @VoucherPoints = points
+    FROM Voucher
+    WHERE voucherID = @VoucherID AND mobileNo = @MobileNo;
+
+    UPDATE Voucher
+    SET redeem_date = GETDATE()
+    WHERE voucherID = @VoucherID AND mobileNo = @MobileNo;
+
+    UPDATE Customer_Account
+    SET point = point - @VoucherPoints
+    WHERE mobileNo = @MobileNo;
+END;
+GO
 
 
 
