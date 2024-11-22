@@ -213,6 +213,45 @@ BEGIN
     DROP TABLE IF EXISTS Technical_Support_Ticket;
 END;
 GO
+
+Create procedure dropAllProceduresFunctionsViews as begin
+DROP PROCEDURE IF EXISTS createAllTables;
+DROP PROCEDURE IF EXISTS dropAllTables;
+DROP PROCEDURE IF EXISTS clearAllTables;
+DROP PROCEDURE IF EXISTS Account_Plan;
+DROP PROCEDURE IF EXISTS Benefits_Account;
+DROP PROCEDURE IF EXISTS Account_Payment_Points;
+DROP PROCEDURE IF EXISTS Total_Points_Account;
+DROP PROCEDURE IF EXISTS Ticket_Account_Customer;
+DROP PROCEDURE IF EXISTS Account_Highest_Voucher;
+DROP PROCEDURE IF EXISTS Top_Successful_Payments;
+DROP PROCEDURE IF EXISTS Initiate_plan_payment;
+DROP PROCEDURE IF EXISTS Payment_wallet_cashback;
+DROP PROCEDURE IF EXISTS Initiate_balance_payment;
+DROP PROCEDURE IF EXISTS Redeem_voucher_points;
+
+
+DROP FUNCTION IF EXISTS Wallet_Cashback_Amount;
+DROP FUNCTION IF EXISTS Wallet_Transfer_Amount;
+DROP FUNCTION IF EXISTS Wallet_MobileNo;
+DROP FUNCTION IF EXISTS AccountLoginValidation;
+DROP FUNCTION IF EXISTS Remaining_plan_amount;
+DROP FUNCTION IF EXISTS Extra_plan_amount;
+
+--the previous part is for dropping the scalar functions then the next section is for table valued functions
+--so nothing is missed
+DROP FUNCTION IF EXISTS Account_Plan_date;
+DROP FUNCTION IF EXISTS Account_Usage_Plan;
+DROP FUNCTION IF EXISTS Account_SMS_Offers;
+DROP FUNCTION IF EXISTS Consumption;
+DROP FUNCTION IF EXISTS Usage_Plan_CurrentMonth;
+DROP FUNCTION IF EXISTS Cashback_Wallet_Customer;
+DROP FUNCTION IF EXISTS Subscribed_plans_5_Months;
+
+
+
+End;Go
+    
 CREATE PROCEDURE clearAllTables AS
 BEGIN
  TRUNCATE TABLE  Plan_Provides_Benefits;
