@@ -248,7 +248,16 @@ DROP FUNCTION IF EXISTS Usage_Plan_CurrentMonth;
 DROP FUNCTION IF EXISTS Cashback_Wallet_Customer;
 DROP FUNCTION IF EXISTS Subscribed_plans_5_Months;
 
-
+DROP VIEW IF EXISTS allCustomerAccounts;
+DROP VIEW IF EXISTS allServicePlans;
+DROP VIEW IF EXISTS allBenefits;
+DROP VIEW IF EXISTS AccountPayments;
+DROP VIEW IF EXISTS allShops;
+DROP VIEW IF EXISTS allResolvedTickets;
+DROP VIEW IF EXISTS CustomerWallet;
+DROP VIEW IF EXISTS E_shopVouchers;
+DROP VIEW IF EXISTS PhysicalStoreVouchers;
+DROP VIEW IF EXISTS Num_of_cashback;
 
 End;Go
     
