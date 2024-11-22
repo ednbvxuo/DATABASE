@@ -229,7 +229,7 @@ DROP PROCEDURE IF EXISTS Initiate_plan_payment;
 DROP PROCEDURE IF EXISTS Payment_wallet_cashback;
 DROP PROCEDURE IF EXISTS Initiate_balance_payment;
 DROP PROCEDURE IF EXISTS Redeem_voucher_points;
-
+DROP PROCEDURE IF EXISTS Unsubscribed_Plans;
 
 DROP FUNCTION IF EXISTS Wallet_Cashback_Amount;
 DROP FUNCTION IF EXISTS Wallet_Transfer_Amount;
@@ -528,6 +528,11 @@ CREATE FUNCTION Consumption (
  WHERE SP.name =  @Plan_name AND P.start_date = @start_date AND P.end_date =  @end_date
  GROUP BY P.usageID ) ; 
  GO 
+
+CREATE PROCEDURE Unsubscribed_Plans @MobileNo CHAR(11) AS BEGIN
+    select P.planID, P.name, P.price, P.description from Service_Plan P
+    where P.planID NOT IN (select S.planID from Subscription S where S.mobileNo = @MobileNo);
+END;Go
 
  CREATE FUNCTION Usage_Plan_CurrentMonth(
  @MobileNo char(11) )
