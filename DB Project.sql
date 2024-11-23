@@ -599,7 +599,60 @@ RETURNS DECIMAL(10, 2) AS BEGIN
 END;
 GO
 -- page 11 and 12 ziad and ahmed--
--- first 3 procedure/functions in page 9 do not work here is the rest
+CREATE FUNCTION Extra_plan_amount(@MobileNo CHAR(11),@plan_name VARCHAR(50))
+RETURNS DECIMAL(10, 2) as begin
+declare @Plan__Price decimal(10, 2);
+declare @Total__Payments decimal(10, 2);
+declare @ExtraAmount decimal(10, 2);
+SELECT @Plan__Price = SP.price
+FROM Service_Plan SP
+JOIN Subscription S ON SP.planID = S.planID
+WHERE S.mobileNo = @MobileNo AND SP.name = @plan_name;
+SELECT @Total__Payments = SUM(P.amount)
+FROM Payments P
+JOIN Subscription S ON P.mobileNo = S.mobileNo
+JOIN Service_Plan SP ON S.planID = SP.planID
+WHERE S.mobileNo = @MobileNo AND SP.name = @plan_name;
+IF @Total__Payments > @Plan__Price
+SET @ExtraAmount = @Total__Payments - @Plan__Price;
+ELSE
+SET @ExtraAmount = 0;
+RETURN @ExtraAmount;
+END;
+GO
+
+
+CREATE PROCEDURE Top_Successful_Payments
+    @MobileNo CHAR(11)
+AS
+BEGIN
+    SELECT TOP 10 
+        p.paymentID,
+        p.amount,
+        p.date_of_payment,
+        p.payment_method,
+        p.status,
+        p.mobileNo
+    FROM Customer_Account ca
+    JOIN Payment p ON ca.mobileNo = p.mobileNo
+    WHERE ca.mobileNo = @MobileNo
+      AND p.status = 'successful'
+    ORDER BY p.amount DESC;
+END;
+
+
+Go
+CREATE FUNCTION Subscribed_plans_5_Months ( @MobileNo CHAR(11) )
+RETURNS TABLE
+AS
+RETURN
+(SELECT 
+SP.planID,sp.name AS Plan_Name,sp.price AS Plan_Price,sp.SMS_offered,sp.minutes_offered,sp.data_offered,s.subscription_date,
+s.status AS SubscriptionStatus
+FROM 
+Subscription s JOIN Service_Plan sp ON s.planID = sp.planID
+WHERE s.mobileNo = @MobileNo AND s.subscription_date >= DATEADD(MONTH, -5, GETDATE()));
+GO
 
 CREATE PROCEDURE Payment_wallet_cashback
 (
