@@ -257,9 +257,33 @@ DROP VIEW IF EXISTS PhysicalStoreVouchers;
 DROP VIEW IF EXISTS Num_of_cashback;
 
 End;go
-    
+    ---------------------------is the following procedure correct
 CREATE PROCEDURE clearAllTables AS
 BEGIN
+ALTER TABLE Plan_Provides_Benefits NOCHECK CONSTRAINT FK_Plan_Provides_Benefits_Benefits;
+ALTER TABLE Plan_Provides_Benefits NOCHECK CONSTRAINT FK_Plan_Provides_Benefits_Service_Plan;
+ALTER TABLE Cashback NOCHECK CONSTRAINT FK_Cashback_Benefits;
+ALTER TABLE Cashback NOCHECK CONSTRAINT FK_Cashback_Wallet;
+ALTER TABLE Exclusive_Offer NOCHECK CONSTRAINT FK_Exclusive_Offer_Benefits;
+ALTER TABLE Points_Group NOCHECK CONSTRAINT FK_Points_Group_Benefits;
+ALTER TABLE Points_Group NOCHECK CONSTRAINT FK_Points_Group_Payment;
+ALTER TABLE Benefits NOCHECK CONSTRAINT FK_Benefits_Customer_Account;
+ALTER TABLE Transfer_money NOCHECK CONSTRAINT FK_Transfer_money_Wallet1;
+ALTER TABLE Transfer_money NOCHECK CONSTRAINT FK_Transfer_money_Wallet2;
+ALTER TABLE Wallet NOCHECK CONSTRAINT FK_Wallet_Customer_Profile;
+ALTER TABLE Process_Payment NOCHECK CONSTRAINT FK_Process_Payment_Payment;
+ALTER TABLE Process_Payment NOCHECK CONSTRAINT FK_Process_Payment_Service_Plan;
+ALTER TABLE Payment NOCHECK CONSTRAINT FK_Payment_Customer_Account;
+ALTER TABLE Plan_Usage NOCHECK CONSTRAINT FK_Plan_Usage_Customer_Account;
+ALTER TABLE Plan_Usage NOCHECK CONSTRAINT FK_Plan_Usage_Service_Plan;
+ALTER TABLE Subscription NOCHECK CONSTRAINT FK_Subscription_Customer_Account;
+ALTER TABLE Subscription NOCHECK CONSTRAINT FK_Subscription_Service_Plan;
+ALTER TABLE Customer_Account NOCHECK CONSTRAINT FK_Customer_Account_Customer_Profile;
+ALTER TABLE E_Shop NOCHECK CONSTRAINT FK_E_Shop_Shop;
+ALTER TABLE Physical_Shop NOCHECK CONSTRAINT FK_Physical_Shop_Shop;
+ALTER TABLE Voucher NOCHECK CONSTRAINT FK_Voucher_Customer_Account;
+ALTER TABLE Voucher NOCHECK CONSTRAINT FK_Voucher_Shop;
+ALTER TABLE Technical_Support_Ticket NOCHECK CONSTRAINT FK_Technical_Support_Ticket_Customer_Account;
  TRUNCATE TABLE  Plan_Provides_Benefits;
    TRUNCATE TABLE  Cashback;
    TRUNCATE TABLE  Exclusive_Offer;
@@ -279,7 +303,31 @@ BEGIN
     TRUNCATE TABLE  Physical_Shop;
     TRUNCATE TABLE  Voucher;
    TRUNCATE TABLE  Technical_Support_Ticket;
-   END; 
+ALTER TABLE Plan_Provides_Benefits WITH CHECK CHECK CONSTRAINT FK_Plan_Provides_Benefits_Benefits;
+ALTER TABLE Plan_Provides_Benefits WITH CHECK CHECK CONSTRAINT FK_Plan_Provides_Benefits_Service_Plan;
+ALTER TABLE Cashback WITH CHECK CHECK CONSTRAINT FK_Cashback_Benefits;
+ALTER TABLE Cashback WITH CHECK CHECK CONSTRAINT FK_Cashback_Wallet;
+ALTER TABLE Exclusive_Offer WITH CHECK CHECK CONSTRAINT FK_Exclusive_Offer_Benefits;
+ALTER TABLE Points_Group WITH CHECK CHECK CONSTRAINT FK_Points_Group_Benefits;
+ALTER TABLE Points_Group WITH CHECK CHECK CONSTRAINT FK_Points_Group_Payment;
+ALTER TABLE Benefits WITH CHECK CHECK CONSTRAINT FK_Benefits_Customer_Account;
+ALTER TABLE Transfer_money WITH CHECK CHECK CONSTRAINT FK_Transfer_money_Wallet1;
+ALTER TABLE Transfer_money WITH CHECK CHECK CONSTRAINT FK_Transfer_money_Wallet2;
+ALTER TABLE Wallet WITH CHECK CHECK CONSTRAINT FK_Wallet_Customer_Profile;
+ALTER TABLE Process_Payment WITH CHECK CHECK CONSTRAINT FK_Process_Payment_Payment;
+ALTER TABLE Process_Payment WITH CHECK CHECK CONSTRAINT FK_Process_Payment_Service_Plan;
+ALTER TABLE Payment WITH CHECK CHECK CONSTRAINT FK_Payment_Customer_Account;
+ALTER TABLE Plan_Usage WITH CHECK CHECK CONSTRAINT FK_Plan_Usage_Customer_Account;
+ALTER TABLE Plan_Usage WITH CHECK CHECK CONSTRAINT FK_Plan_Usage_Service_Plan;
+ALTER TABLE Subscription WITH CHECK CHECK CONSTRAINT FK_Subscription_Customer_Account;
+ALTER TABLE Subscription WITH CHECK CHECK CONSTRAINT FK_Subscription_Service_Plan;
+ALTER TABLE Customer_Account WITH CHECK CHECK CONSTRAINT FK_Customer_Account_Customer_Profile;
+ALTER TABLE E_Shop WITH CHECK CHECK CONSTRAINT FK_E_Shop_Shop;
+ALTER TABLE Physical_Shop WITH CHECK CHECK CONSTRAINT FK_Physical_Shop_Shop;
+ALTER TABLE Voucher WITH CHECK CHECK CONSTRAINT FK_Voucher_Customer_Account;
+ALTER TABLE Voucher WITH CHECK CHECK CONSTRAINT FK_Voucher_Shop;
+ALTER TABLE Technical_Support_Ticket WITH CHECK CHECK CONSTRAINT FK_Technical_Support_Ticket_Customer_Account;
+END; 
    GO
 -- is this correct?? JAN -- 
 
